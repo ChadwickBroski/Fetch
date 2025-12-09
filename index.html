@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Fetch</title>
+    <meta name="description" content="Search wikipedia instantly with Fetch.">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" as="style" onload="this.rel='stylesheet'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    </noscript>
+    
+    <!-- Preconnect for faster font load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Load Font Awesome without blocking render -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    </noscript>
+    <style>
+        html {
+            filter: sepia(100%);
+            background-color: #121212;
+            color: #e0c097;
+        }
+        h1 {
+            font-family: "Nunito";
+            font-weight: 1;
+            display:flex; 
+            justify-content:center; 
+            align-items:center;
+            margin-top: 100px;
+            margin-bottom: 0;
+            font-size:800%;
+            user-select: none;
+            color: inherit;
+        }
+        input[type="text"] {
+            display: block;
+            margin: 0 auto;
+            width: 750px;
+            height: 50px;
+            border: none;
+            border-radius: 30px;
+            background-color: #2a2a2a;
+            color: #e0c097;
+            box-shadow: rgba(255, 255, 255, 0.05) 0px 1px 3px 0px,
+                        rgba(224, 192, 151, 0.3) 0px 0px 0px 1px;
+            padding-left: 50px;
+            font-size: 18px;
+            font-family: "Nunito", sans-serif;
+            transition: 0.4s;
+        }
+        input[type="text"]:focus {
+            box-shadow: rgba(224, 192, 151, 0.5) 0px 7px 29px 0px;
+            outline: none;
+        }
+        input::placeholder {
+            font-size: 18px;
+            font-family: "Nunito", sans-serif;
+            user-select: none;
+            color: #bfa67a;
+        }
+        i.fas.fa-search {
+            color: #e0c097;
+            text-shadow: 0 0 5px rgba(224, 192, 151, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <main>
+        
+    <h1><i>Fetch</i></h1>
+    <!-- FIXED SEARCH ICON CONTAINER -->
+    <div style="position: relative; width: 750px; margin: 0 auto;">
+        <i class="fas fa-search" 
+           style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #e0c097;">
+        </i>
+        <input id="input" type="text" placeholder="Fetch For Anything on Wikipedia" spellcheck="false" autocomplete="off">
+    </div>
+
+    </main>
+
+    <script src="FullPage.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title id="dynamicTitle">Fetch</title>
+    <meta id="dynamicDescription" name="description" content="Search Wikipedia instantly with Fetch.">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" as="style" onload="this.rel='stylesheet'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    </noscript>
+    
+    <!-- Preconnect for faster font load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Load Font Awesome without blocking render -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    </noscript>
+    <style>
+        html {
+            filter: sepia(100%);
+            background-color: #121212;
+            color: #e0c097;
+        }
+        input[type="text"] {
+            display: block;
+            margin: 50px auto 10px auto;
+            width: 750px;
+            height: 50px;
+            border: none;
+            border-radius: 30px;
+            background-color: #2a2a2a;
+            color: #e0c097;
+            box-shadow: rgba(255, 255, 255, 0.05) 0px 1px 3px 0px,
+                        rgba(224, 192, 151, 0.3) 0px 0px 0px 1px;
+            padding-left: 50px;
+            font-size: 18px;
+            font-family: "Nunito", sans-serif;
+            transition: 0.4s;
+        }
+        input[type="text"]:focus {
+            box-shadow: rgba(224, 192, 151, 0.5) 0px 7px 29px 0px;
+            outline: none;
+        }
+        input::placeholder {
+            font-size: 18px;
+            font-family: "Nunito", sans-serif;
+            user-select: none;
+            color: #bfa67a;
+        }
+        i.fas.fa-search {
+            color: #e0c097;
+            text-shadow: 0 0 5px rgba(224, 192, 151, 0.7);
+        }
+        .wikipedia {
+            font-family: "Nunito", sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            color: #e0c097;
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(224, 192, 151, 0.5);
+            user-select: text;
+        }
+        .wikipedia h1 {
+            font-size: 4em;
+            margin-bottom: 0.5em;
+            user-select: text;
+        }
+        .wikipedia h2 {
+            font-size: 2.5em;
+            margin-bottom: 0.3em;
+            user-select: text;
+            position: relative;
+            padding-bottom: 0.3em;
+        }
+        .wikipedia h2::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #e0c097;
+            opacity: 0.7;
+        }
+        .wikipedia h3 { font-size: 2em; margin-bottom: 0.5em; user-select: text; }
+        .wikipedia h4 { font-size: 1.5em; margin-bottom: 0.5em; user-select: text; }
+        .wikipedia h5 { font-size: 1.2em; margin-bottom: 0.5em; user-select: text; }
+        .wikipedia h6 { font-size: 1em; margin-bottom: 0.5em; user-select: text; }
+        .wikipedia p {
+            font-size: 20px;
+            line-height: 1.5em;
+            margin-bottom: 1em;
+            user-select: text;
+        }
+        .wikipedia a {
+            text-decoration: none !important;
+            pointer-events: none;
+            color: inherit;
+            cursor: default;
+        }
+        h1 {
+            font-family: "Nunito", sans-serif;
+            margin: 0;
+            font-size: 50px;
+            margin-bottom: 0;
+            font-weight: 1;
+            color: white;
+        }
+        body {
+            position: relative;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <main>
+    <a href="index.html"><h1><i>Fetch</i></h1></a>
+
+    <!-- FIXED SEARCH ICON CONTAINER -->
+    <div style="position: relative; width: 750px; margin: 50px auto 10px auto;">
+        <i class="fas fa-search"
+           style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #e0c097;">
+        </i>
+        <input type="text" id="searchInput" spellcheck="false" autocomplete="off" placeholder="Search Wikipedia">
+    </div>
+    </main>
+
+    <div id="wikiContent" class="wikipedia">Loading...</div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const query = params.get("query") || "";
+
+        const input = document.getElementById("searchInput");
+        const output = document.getElementById("wikiContent");
+        // Set dynamic title
+        const pageTitle = document.getElementById("dynamicTitle");
+        const metaDescription = document.getElementById("dynamicDescription");
+
+        if (query) {
+            const formatted = query.charAt(0).toUpperCase() + query.slice(1);
+            pageTitle.textContent = `Fetch - ${formatted}`;
+            metaDescription.setAttribute("content", `Wikipedia results for ${formatted} fetched instantly.`);
+        }
+
+        input.value = query;
+        input.focus();
+
+        async function getWikipediaMarkedContent(title) {
+            const endpoint = "https://en.wikipedia.org/w/api.php";
+            const params = new URLSearchParams({
+                action: "parse",
+                page: title,
+                format: "json",
+                origin: "*",
+                prop: "text"
+            });
+
+            try {
+                const response = await fetch(`${endpoint}?${params.toString()}`);
+                const data = await response.json();
+
+                if (!data.parse) {
+                    output.innerHTML = "<p>No content found for the given title.</p>";
+                    return;
+                }
+
+                const htmlString = data.parse.text["*"];
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = htmlString;
+
+                tempDiv.querySelectorAll("sup.reference").forEach(el => el.remove());
+                tempDiv.querySelectorAll("a").forEach(a => { a.removeAttribute("href"); });
+
+                const contentElements = tempDiv.querySelectorAll("h1, h2, h3, h4, h5, h6, p");
+
+                output.innerHTML = "";
+
+                const h1 = document.createElement("h1");
+                h1.textContent = title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
+                output.appendChild(h1);
+
+                contentElements.forEach(el => {
+                    if(el.tagName.toLowerCase() === "h1") return;
+                    output.appendChild(el.cloneNode(true));
+                });
+
+            } catch (error) {
+                output.innerHTML = `<p>An error occurred: ${error.message}</p>`;
+            }
+        }
+
+        input.addEventListener("keydown", (event) => {
+            if(event.key === "Enter") {
+                event.preventDefault();
+                const val = input.value.trim();
+                if(val) {
+                    window.location.href = `show.html?query=${encodeURIComponent(val)}`;
+                }
+            }
+        });
+
+        (async () => {
+            if (query) {
+                await getWikipediaMarkedContent(query);
+            } else {
+                output.innerHTML = "<p>Please enter a search term above.</p>";
+            }
+        })();
+    </script>
+</body>
+</html>
